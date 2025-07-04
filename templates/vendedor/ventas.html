@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}Registrar Venta{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ventas.css') }}">
+<script src="{{ url_for('static', filename='js/ventas.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Registro de Venta</h2>
+
+    <!-- Buscar Cliente -->
+    <div class="row">
+    <div style="flex: 1;">
+        <button type="button" class="boton boton-pequeno" onclick="mostrarModal()">Buscar cliente</button>
+    </div>
+</div>
+
+
+    <!-- Modal de búsqueda -->
+<div id="modal" style="
+    display: none;
+    position: fixed;
+    top: 100px;
+    right: 40px;
+    width: 350px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    padding: 25px;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+">
+    <div id="modal-content" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: flex-end;">
+            <span class="close" style="cursor: pointer; font-size: 22px;" onclick="cerrarModal()">&times;</span>
+        </div>
+        <h3 style="position: absolute; top:5 px; left: 50%; transform: translateX(-50%); margin: 0;">Buscar Cliente</h3>
+
+        <input id="busqueda"
+       type="text"
+       placeholder="🔍 Buscar por nombre o RUC..."
+       style="
+           display: block;
+           width: 80%;
+           max-width: 280px;
+           margin: 20px auto;
+           padding: 10px 14px;
+           border-radius: 8px;
+           border: 1px solid #ccc;
+           font-size: 14px;
+           box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+       ">
+       <ul id="resultados" style="
+    list-style: none;
+    margin: 0 auto;
+    padding: 10px;
+    width: 80%;
+    max-width: 280px;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+    font-size: 14px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+"></ul>
+
+
+    </div>
+</div>
+
+
+
+    <!-- Cliente confirmado flag para JS -->
+    <input type="hidden" id="cliente_confirmado_flag" value="{{ 1 if cliente else 0 }}">
+
+    <div style="margin-top: 20px;"></div>
+
+    <!-- Registrar Cliente -->
+    <form method="POST" action="{{ url_for('vendedor.registrar_cliente_route') }}">
+        <div class="row">
+            <label>Nombres:</label>
+            <input type="text" name="nombre" id="nombre" value="{{ cliente.nombre if cliente else '' }}">
+            <label>Apellidos:</label>
+            <input type="text" name="apellidos" id="apellidos" value="{{ cliente.apellidos if cliente else '' }}">
+        </div>
+        <div class="row">
+    <label>Correo:</label>
+    <input type="text" name="correo" id="correo" value="{{ cliente.correo if cliente else '' }}">
+    <label>Dirección:</label>
+    <input type="text" name="direccion" id="direccion" value="{{ cliente.direccion if cliente else '' }}">
+</div>
+<div class="row">
+    <label>RUC:</label>
+    <input type="text" name="ruc" id="ruc" value="{{ cliente.ruc if cliente else '' }}">
+    <label>Teléfono:</label>
+    <input type="text" name="telefono" id="telefono" value="{{ cliente.telefono if cliente else '' }}">
+</div>
+        <div class="row">
+            <label>Razón social:</label>
+            <input type="text" name="razon_social" id="razon_social" value="{{ cliente.razon_social if cliente else '' }}">
+        </div>
+        <div class="row">
+            <button type="submit" class="boton btn-bloque" style="flex: 1; margin-right: 10px;">Registrar Cliente</button>
+    </form>
+
+    <!-- Ingresar Cliente -->
+    <form method="POST" action="{{ url_for('vendedor.ingresar_cliente_route') }}" style="flex: 1;">
+        <input type="hidden" id="cod_cliente" name="cod_cliente" value="{{ cliente.id_cliente if cliente else '' }}">
+        <button type="submit" class="boton btn-bloque">Ingresar Cliente</button>
+    </form>
+        </div>
+
+    {% if cliente %}
+    <div id="cliente-seleccionado" class="info-cliente">
+        Cliente seleccionado: {{ cliente.nombre }} {{ cliente.apellidos }} - RUC: {{ cliente.ruc }}
+    </div>
+    {% endif %}
+
+    <hr>
+
+    <!-- Agregar Producto al Carrito -->
+    <form method="POST" action="{{ url_for('vendedor.agregar_producto_route') }}">
+        <div class="row">
+    <label>Producto:</label>
+    <select name="id_producto" required>
+        {% for p in productos %}
+        <option value="{{ p[0] }}" data-precio="{{ p[2] }}">{{ p[1] }}</option>
+        {% endfor %}
+    </select>
+    <label>Precio Unitario:</label>
+    <input type="text" id="precio" name="precio" readonly>
+</div>
+<div class="row">
+    <label>Cantidad:</label>
+    <input type="number" name="cantidad" min="1" value="1">
+</div>
+
+        <button class="boton" type="submit">Agregar</button>
+    </form>
+
+    {% if carrito %}
+    <!-- Tabla del Carrito -->
+    <fieldset>
+        <legend>Carrito</legend>
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in carrito %}
+                <tr>
+                    <td>
+                        <form method="POST" action="{{ url_for('vendedor.eliminar_producto_route') }}">
+                            <input type="hidden" name="index" value="{{ loop.index0 }}">
+                            <button type="submit" class="btn-eliminar">🗑</button>
+                        </form>
+                    </td>
+                    <td>{{ item.nombre }}</td>
+                    <td>{{ item.cantidad }}</td>
+                    <td>{{ item.precio_unitario }}</td>
+                    <td>{{ item.subtotal }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p><strong>Subtotal:</strong> S/ {{ subtotal }}</p>
+        <p><strong>IGV (18%):</strong> S/ {{ igv }}</p>
+        <p><strong>Total:</strong> S/ {{ total }}</p>
+    </fieldset>
+    {% endif %}
+
+    <!-- Confirmar Venta -->
+<form method="POST" action="{{ url_for('vendedor.registrar_venta_route') }}">
+    <fieldset>
+        <legend>Pago</legend>
+        <label for="forma_pago">Forma de Pago:</label>
+        <select name="forma_pago" id="forma_pago">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Yape">Yape</option>
+            <option value="Plin">Plin</option>
+        </select>
+    </fieldset>
+
+    <div style="position: relative; height: 60px; margin-top: 20px;">
+
+    <!-- Botón Limpiar Todo a la izquierda -->
+    <form method="POST" action="{{ url_for('vendedor.limpiar_formulario_route') }}" style="position: absolute; left: 0; bottom: 1;">
+        <button type="submit" onclick="habilitarCampos()" class="boton boton-pequeno">Limpiar Todo</button>
+    </form>
+
+    <!-- Botón Registrar Venta a la derecha -->
+    <form method="POST" action="{{ url_for('vendedor.registrar_venta_route') }}" style="position: absolute; right: 0; bottom: 1;">
+        <button type="submit" class="boton boton-pequeno">Registrar Venta</button>
+    </form>
+
+</div>
+
+
+
+
+
+</div>
+{% endblock %}
