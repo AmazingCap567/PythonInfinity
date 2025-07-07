@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Clientes - PythonInfinity{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/clientes.css') }}">
+
+<h2>Clientes Registrados</h2>
+
+<div style="margin-bottom: 20px;">
+    <a href="{{ url_for('gerente.agregar_cliente') }}" class="boton">➕ Agregar Cliente</a>
+</div>
+
+<table class="tabla-clientes">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellidos</th>
+            <th>RUC</th>
+            <th>Razón Social</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in clientes %}
+        <tr>
+            <td>{{ c[0] }}</td>
+            <td>{{ c[5] or '' }}</td>
+            <td>{{ c[6] or '' }}</td>
+            <td>{{ c[2] or '' }}</td>
+            <td>{{ c[1] or '' }}</td>
+            <td>{{ c[7] or '' }}</td>
+            <td>{{ c[4] or '' }}</td>
+            <td>{{ c[3] or '' }}</td>
+            <td>
+                <a href="{{ url_for('gerente.editar_cliente', id=c[0]) }}" class="boton boton-pequeno">✏️ Editar</a>
+                <a href="{{ url_for('gerente.eliminar_cliente', id=c[0]) }}" class="boton boton-pequeno" style="background-color: #dc3545;">🗑️</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

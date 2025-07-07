@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Editar Cliente{% endblock %}
+
+{% block content %}
+<h2>Editar Cliente</h2>
+
+<form method="post">
+    <label>Razón Social:</label>
+    <input type="text" name="razon_social" value="{{ cliente[1] or '' }}"><br>
+
+    <label>RUC:</label>
+    <input type="text" name="ruc" value="{{ cliente[2] or '' }}"><br>
+
+    <label>Dirección:</label>
+    <input type="text" name="direccion" value="{{ cliente[3] or '' }}"><br>
+
+    <label>Teléfono:</label>
+    <input type="text" name="telefono" value="{{ cliente[4] or '' }}"><br>
+
+    <label>Nombre:</label>
+    <input type="text" name="nombre" value="{{ cliente[5] or '' }}"><br>
+
+    <label>Apellidos:</label>
+    <input type="text" name="apellidos" value="{{ cliente[6] or '' }}"><br>
+
+    <label>Correo:</label>
+    <input type="email" name="correo" value="{{ cliente[7] or '' }}"><br><br>
+
+    <button type="submit" class="boton">Guardar Cambios</button>
+    <a href="{{ url_for('gerente.clientes') }}" class="boton">Cancelar</a>
+</form>
+{% endblock %}

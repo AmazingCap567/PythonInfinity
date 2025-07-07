@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Reporte: Inventario Bajo{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reportes/inventario_bajo.css') }}?v=1">
+
+<h2 class="titulo-reporte">📦 Productos con Inventario Bajo</h2>
+
+<table class="tabla-reporte">
+    <thead>
+        <tr>
+            <th>ID Producto</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Stock</th>
+            <th>Precio</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if productos %}
+            {% for p in productos %}
+            <tr>
+                <td>{{ p.id_producto }}</td>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.tipo or '—' }}</td>
+                <td>{{ p.stock }}</td>
+                <td>S/ {{ "%.2f"|format(p.precio) }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr><td colspan="5">No hay productos con bajo stock.</td></tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,10 @@
+/* Este archivo es opcional si quieres separar el CSS */
+
+#tabla-productos th, #tabla-productos td {
+    border-bottom: 1px solid #ddd;
+}
+
+#tabla-productos tr:hover {
+    background-color: #f2f2f2;
+    cursor: pointer;
+}

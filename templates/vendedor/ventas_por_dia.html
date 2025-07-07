@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Ventas por Día{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ventas_por_dia.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Ventas del {{ fecha }}</h2>
+
+    {% if ventas %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID Venta</th>
+                <th>Cliente</th>
+                <th>Forma de Pago</th>
+                <th>Total</th>
+                <th>Ver Productos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in ventas %}
+            <tr>
+                <td>{{ fila.id_venta }}</td>
+                <td>{{ fila.cliente }}</td>
+                <td>{{ fila.forma_pago }}</td>
+                <td>S/ {{ "%.2f"|format(fila.total) }}</td>
+                <td>
+                    <a href="{{ url_for('vendedor.productos_por_venta', id_venta=fila.id_venta) }}" class="btn-ver">Ver Productos</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="mensaje">No hay ventas registradas para este día.</p>
+    {% endif %}
+
+    <div class="volver">
+        <a href="{{ url_for('vendedor.historial_ventas') }}" class="boton-volver">← Volver al Historial</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Ver Clientes - PythonInfinity{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/clientes_vendedor.css') }}">
+
+<h2 class="titulo">Clientes Registrados</h2>
+
+<div class="contenedor-busqueda">
+    <input type="text" id="buscador" placeholder="Buscar por nombre, apellidos o RUC...">
+</div>
+
+<table class="tabla-clientes">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellidos</th>
+            <th>RUC</th>
+            <th>Razón Social</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+        </tr>
+    </thead>
+    <tbody id="tabla-body">
+        <!-- Aquí se llenarán dinámicamente los resultados -->
+    </tbody>
+</table>
+
+<script src="{{ url_for('static', filename='js/clientes.js') }}"></script>
+
+{% endblock %}

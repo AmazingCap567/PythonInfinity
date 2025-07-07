@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Gestión de Productos{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/producto.css') }}?v=1">
+
+<h2 class="titulo">📦 Gestión de Productos</h2>
+
+<!-- Panel de filtros -->
+<div class="panel-filtros">
+    <form method="get">
+        <div class="filtros-horizontal">
+            <div class="filtro-campo">
+                <label>Nombre</label>
+                <input type="text" name="nombre" value="{{ filtros.nombre }}">
+            </div>
+            <div class="filtro-campo">
+                <label>Tipo</label>
+                <input type="text" name="tipo" value="{{ filtros.tipo }}">
+            </div>
+            <div class="filtro-campo">
+                <label>Color</label>
+                <input type="text" name="color" value="{{ filtros.color }}">
+            </div>
+            <div class="filtro-campo">
+                <label>Material</label>
+                <input type="text" name="material" value="{{ filtros.material }}">
+            </div>
+            <div class="filtro-botones">
+                <button type="submit" class="btn-filtrar">🔍 Filtrar</button>
+                <button type="button" id="btn-limpiar" class="btn-limpiar">❌ Limpiar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Tabla de productos -->
+<div class="tabla-contenedor">
+    <table class="tabla-estilizada">
+        <thead>
+            <tr>
+                <th>ID</th><th>Nombre</th><th>Descripción</th><th>Tipo</th><th>Precio</th>
+                <th>Stock</th><th>Color</th><th>Material</th><th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in productos %}
+            <tr>
+                <td>{{ p.id_producto }}</td>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.descripcion or '' }}</td>
+                <td>{{ p.tipo or '' }}</td>
+                <td>S/ {{ "%.2f"|format(p.precio) }}</td>
+                <td>{{ p.stock }}</td>
+                <td>{{ p.color or '' }}</td>
+                <td>{{ p.material or '' }}</td>
+                <td>
+                    <button class="btn-accion editar" onclick='abrirEditarProducto({{ p | tojson | safe }})'>✏️</button>
+                    <button class="btn-accion eliminar" onclick="eliminarProducto({{ p.id_producto }})">🗑️</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Botón flotante -->
+<button class="boton-flotante" onclick="abrirModalNuevo()">➕</button>
+
+<!-- Modal -->
+<!-- Modal -->
+<div id="modal-producto" class="modal">
+    <div class="modal-contenido">
+        <span class="cerrar" onclick="cerrarModal()">×</span>
+        <h3 id="modal-titulo">Nuevo Producto</h3>
+        <form id="form-producto" class="form-grid">
+            <input type="hidden" name="id_producto" id="id_producto">
+
+            <div class="campo">
+                <label>Nombre</label>
+                <input type="text" name="nombre" id="nombre" required>
+            </div>
+
+            <div class="campo">
+                <label>Descripción</label>
+                <textarea name="descripcion" id="descripcion" rows="2"></textarea>
+            </div>
+
+            <div class="campo">
+                <label>Tipo</label>
+                <input type="text" name="tipo" id="tipo">
+            </div>
+
+            <div class="campo">
+                <label>Precio</label>
+                <input type="number" name="precio" id="precio" step="0.01" required>
+            </div>
+
+            <div class="campo">
+                <label>Stock</label>
+                <input type="number" name="stock" id="stock" required>
+            </div>
+
+            <div class="campo">
+                <label>Color</label>
+                <input type="text" name="color" id="color">
+            </div>
+
+            <div class="campo">
+                <label>Material</label>
+                <input type="text" name="material" id="material">
+            </div>
+
+            <div class="botones-form">
+                <button type="submit" class="btn-guardar">💾 Guardar</button>
+                <button type="button" onclick="cerrarModal()" class="btn-cancelar">❌ Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='js/productos.js') }}?v=2"></script>
+{% endblock %}

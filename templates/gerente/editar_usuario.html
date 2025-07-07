@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Editar Usuario{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ventas.css') }}">
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Editar Usuario</h2>
+    <form method="POST">
+        <div class="row">
+            <label>Usuario:</label>
+            <input type="text" value="{{ usuario[1] }}" disabled>
+            <label>DNI:</label>
+            <input type="text" name="dni" value="{{ usuario[2] }}" required maxlength="8">
+        </div>
+        <div class="row">
+            <label>Cargo:</label>
+            <select name="cargo" required>
+                <option value="Vendedor" {% if usuario[3] == 'Vendedor' %}selected{% endif %}>Vendedor</option>
+                <option value="Gerente" {% if usuario[3] == 'Gerente' %}selected{% endif %}>Gerente</option>
+            </select>
+            <label>Contraseña (opcional):</label>
+            <input type="password" name="contrasena" placeholder="Deja vacío para no cambiar">
+        </div>
+        <button type="submit" class="boton">Actualizar</button>
+    </form>
+</div>
+{% endblock %}

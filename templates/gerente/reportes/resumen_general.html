@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}📊 Resumen General{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reportes/resumen_general.css') }}">
+
+<h2 class="titulo-reporte">📊 Resumen General</h2>
+
+<div class="grid-graficos">
+    <!-- Ventas por Día -->
+    <div class="grafico-container">
+        <h3>📅 Ventas por Día</h3>
+        <canvas id="ventasDiaChart"></canvas>
+    </div>
+
+    <!-- Formas de Pago -->
+    <div class="grafico-container">
+        <h3>💳 Formas de Pago</h3>
+        <canvas id="formasPagoChart"></canvas>
+    </div>
+
+    <!-- Productos Más Vendidos -->
+    <div class="grafico-container">
+        <h3>🔥 Productos Más Vendidos</h3>
+        <canvas id="productosMasVendidosChart"></canvas>
+    </div>
+
+    <!-- Categorías Más Vendidas -->
+    <div class="grafico-container">
+        <h3>🏷️ Categorías Más Vendidas</h3>
+        <canvas id="categoriasChart"></canvas>
+    </div>
+
+    <!-- Vendedores con Más Ventas -->
+    <div class="grafico-container">
+        <h3>🧑‍💼 Vendedores con Más Ventas</h3>
+        <canvas id="vendedoresChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const resumen = {{ resumen | tojson }};
+
+    new Chart(document.getElementById('ventasDiaChart'), {
+        type: 'bar',
+        data: {
+            labels: resumen.ventas_dia.map(e => e[0]),
+            datasets: [{
+                label: 'S/. Ventas',
+                data: resumen.ventas_dia.map(e => e[1]),
+                backgroundColor: '#1b3a57'
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('formasPagoChart'), {
+        type: 'doughnut',
+        data: {
+            labels: resumen.formas_pago.map(e => e[0]),
+            datasets: [{
+                data: resumen.formas_pago.map(e => e[1]),
+                backgroundColor: ['#2f5b80', '#4b7ca7', '#86b3d1']
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('productosMasVendidosChart'), {
+        type: 'bar',
+        data: {
+            labels: resumen.productos.map(e => e[0]),
+            datasets: [{
+                label: 'Unidades',
+                data: resumen.productos.map(e => e[1]),
+                backgroundColor: '#4b7ca7'
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('categoriasChart'), {
+        type: 'pie',
+        data: {
+            labels: resumen.categorias.map(e => e[0]),
+            datasets: [{
+                data: resumen.categorias.map(e => e[1]),
+                backgroundColor: ['#1b3a57', '#2f5b80', '#4b7ca7', '#86b3d1', '#c9d9e8']
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('vendedoresChart'), {
+        type: 'bar',
+        data: {
+            labels: resumen.vendedores.map(e => e[0]),
+            datasets: [{
+                label: 'Ventas',
+                data: resumen.vendedores.map(e => e[1]),
+                backgroundColor: '#86b3d1'
+            }]
+        }
+    });
+</script>
+{% endblock %}

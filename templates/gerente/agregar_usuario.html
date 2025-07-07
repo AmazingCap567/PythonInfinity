@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Agregar Usuario{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ventas.css') }}">
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Nuevo Usuario</h2>
+    <form method="POST">
+        <div class="row">
+            <label>Usuario:</label>
+            <input type="text" name="usuario" required>
+            <label>DNI:</label>
+            <input type="text" name="dni" required maxlength="8">
+        </div>
+        <div class="row">
+            <label>Cargo:</label>
+            <select name="cargo" required>
+                <option value="Vendedor">Vendedor</option>
+                <option value="Gerente">Gerente</option>
+            </select>
+            <label>Contraseña:</label>
+            <input type="password" name="contrasena" required>
+        </div>
+        <button type="submit" class="boton">Registrar</button>
+    </form>
+</div>
+{% endblock %}

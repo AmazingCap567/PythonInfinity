@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Detalle de Venta {{ id_venta }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reportes/detalle_venta.css') }}?v=1">
+
+<h2 class="titulo-reporte">🧾 Detalle de Venta #{{ id_venta }}</h2>
+
+<table class="tabla-reporte">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if detalles %}
+            {% for d in detalles %}
+            <tr>
+                <td>{{ d.nombre }}</td>
+                <td>{{ d.cantidad }}</td>
+                <td>S/ {{ "%.2f"|format(d.precio_unitario) }}</td>
+                <td>S/ {{ "%.2f"|format(d.subtotal) }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr><td colspan="4">No hay productos registrados para esta venta.</td></tr>
+        {% endif %}
+    </tbody>
+</table>
+
+
+<a href="{{ url_for('gerente.reporte_ventas_por_dia', fecha=request.args.get('fecha')) }}" class="boton">← Volver al Reporte</a>
+{% endblock %}

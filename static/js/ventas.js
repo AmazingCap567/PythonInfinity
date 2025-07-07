@@ -1,22 +1,43 @@
 document.addEventListener("DOMContentLoaded", function () {
     // ===========================
-    // 1. Actualizar precio producto
+    // 1. Actualizar precio producto y stock
     // ===========================
-    const selectProducto = document.querySelector("select[name='id_producto']");
+    const selectProducto = document.getElementById("id_producto");
     const precioInput = document.getElementById("precio");
+    const cantidadInput = document.querySelector("input[name='cantidad']");
+    const stockInput = document.getElementById("stock_disponible");  // ✅ corregido
+    const btnAgregar = document.querySelector("form[action*='agregar_producto'] button[type='submit']");
+    btnAgregar.id = "btn-agregar";
 
-    if (selectProducto && precioInput) {
-        selectProducto.addEventListener("change", actualizarPrecio);
-        actualizarPrecio();
-    }
+    const advertencia = document.getElementById("advertencia-stock");
 
-    function actualizarPrecio() {
+    function actualizarPrecioYStock() {
         const selected = selectProducto.options[selectProducto.selectedIndex];
         if (selected) {
             precioInput.value = selected.getAttribute("data-precio") || "";
+            stockInput.value = selected.getAttribute("data-stock") || "0";
+            validarCantidad();
         }
     }
 
+    function validarCantidad() {
+        const cantidad = parseInt(cantidadInput.value) || 0;
+        const stock = parseInt(stockInput.value) || 0;
+
+        if (cantidad > stock) {
+            btnAgregar.disabled = true;
+            advertencia.textContent = "Cantidad supera el stock disponible.";
+        } else {
+            btnAgregar.disabled = false;
+            advertencia.textContent = "";
+        }
+    }
+
+    if (selectProducto && precioInput && cantidadInput && stockInput && advertencia) {
+        selectProducto.addEventListener("change", actualizarPrecioYStock);
+        cantidadInput.addEventListener("input", validarCantidad);
+        actualizarPrecioYStock(); // inicial
+    }
     // ================================
     // 2. Bloquear campos si cliente confirmado
     // ================================
@@ -96,8 +117,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const campo = document.getElementById(id);
             if (campo) {
                 campo.disabled = false;
-                campo.style.backgroundColor = ""; // restaura fondo
-                campo.style.border = ""; // restaura borde
+                campo.style.backgroundColor = "";
+                campo.style.border = "";
             }
         });
 

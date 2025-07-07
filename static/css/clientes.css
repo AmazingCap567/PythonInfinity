@@ -1,0 +1,64 @@
+body {
+    background-color: #f3f6f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+    color: #1b3a57;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.boton {
+    background-color: #1b3a57;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+}
+
+.boton:hover {
+    background-color: #2f5b80;
+}
+
+.boton-pequeno {
+    font-size: 14px;
+    padding: 6px 10px;
+    margin: 0 2px;
+}
+
+.tabla-clientes {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+    background-color: white;
+    box-shadow: 0px 0px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tabla-clientes thead {
+    background-color: #1b3a57;
+    color: white;
+}
+
+.tabla-clientes th, .tabla-clientes td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabla-clientes tr:hover {
+    background-color: #f0f0f0;
+}
+
+.tabla-clientes td:last-child {
+    white-space: nowrap;
+}
+
+.container {
+    max-width: 1000px;
+    ma

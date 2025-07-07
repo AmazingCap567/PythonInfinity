@@ -35,23 +35,49 @@ def registrar_cliente():
         flash("Nombre, Apellidos y RUC son obligatorios", "danger")
         return redirect(url_for('vendedor.ventas'))
 
+    ruc = data["ruc"]
     conn = conectar_bd()
     cursor = conn.cursor()
-    query = """
-        INSERT INTO clientes (nombre, apellidos, ruc, direccion, razon_social, correo)
-        VALUES (%s, %s, %s, %s, %s, %s)
-    """
-    valores = (
-        data["nombre"], data["apellidos"], data["ruc"],
-        data.get("direccion") or None,
-        data.get("razon_social") or None,
-        data.get("correo") or None
-    )
-    cursor.execute(query, valores)
+
+    # Verificar si ya existe un cliente con el mismo RUC
+    cursor.execute("SELECT id_cliente FROM clientes WHERE ruc = %s", (ruc,))
+    cliente = cursor.fetchone()
+
+    if cliente:
+        # Actualizar cliente existente y activar
+        query = """
+            UPDATE clientes
+            SET nombre = %s, apellidos = %s, direccion = %s, razon_social = %s, correo = %s, activo = TRUE
+            WHERE ruc = %s
+        """
+        valores = (
+            data["nombre"], data["apellidos"],
+            data.get("direccion") or None,
+            data.get("razon_social") or None,
+            data.get("correo") or None,
+            ruc
+        )
+        cursor.execute(query, valores)
+        flash("Cliente actualizado y activado", "success")
+    else:
+        # Insertar nuevo cliente
+        query = """
+            INSERT INTO clientes (nombre, apellidos, ruc, direccion, razon_social, correo, activo)
+            VALUES (%s, %s, %s, %s, %s, %s, TRUE)
+        """
+        valores = (
+            data["nombre"], data["apellidos"], ruc,
+            data.get("direccion") or None,
+            data.get("razon_social") or None,
+            data.get("correo") or None
+        )
+        cursor.execute(query, valores)
+        flash("Cliente registrado exitosamente", "success")
+
     conn.commit()
     conn.close()
-    flash("Cliente registrado con éxito", "success")
     return redirect(url_for('vendedor.ventas'))
+
 
 def ingresar_cliente():
     id_cliente = request.form.get("cod_cliente")
@@ -149,3 +175,49 @@ def eliminar_producto_carrito():
         carrito.pop(index)
         session["carrito"] = carrito
     return redirect(url_for("vendedor.ventas"))
+
+def obtener_historial_ventas(id_usuario, filtros):
+    conn = conectar_bd()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT fecha,
+               SUM(total_ventas) AS total_dia,
+               SUM(cantidad_ventas) AS cantidad
+        FROM vista_ventas_diarias
+        WHERE usuario = %s
+    """
+    params = [id_usuario]
+
+    if filtros.get("fecha_inicio"):
+        query += " AND fecha >= %s"
+        params.append(filtros["fecha_inicio"])
+    if filtros.get("fecha_fin"):
+        query += " AND fecha <= %s"
+        params.append(filtros["fecha_fin"])
+    if filtros.get("min_total"):
+        query += " AND total_ventas >= %s"
+        params.append(filtros["min_total"])
+    if filtros.get("max_total"):
+        query += " AND total_ventas <= %s"
+        params.append(filtros["max_total"])
+
+    query += " GROUP BY fecha ORDER BY fecha DESC"
+
+    cursor.execute(query, params)
+
+    resultados = [
+        {
+            "fecha": fila[0],
+            "total_dia": float(fila[1]),
+            "cantidad": fila[2]
+        }
+        for fila in cursor.fetchall()
+    ]
+
+    cursor.close()
+    conn.close()
+
+    return resultados
+
+

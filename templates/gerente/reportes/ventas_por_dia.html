@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Reporte: Ventas por Día{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reportes/reportes_venta_por_dia.css') }}?v=1">
+
+
+<h2 class="titulo-reporte">📅 Reporte de Ventas por Día</h2>
+
+<form method="get" class="form-fecha">
+    <label for="fecha">Selecciona una fecha:</label>
+    <input type="date" id="fecha" name="fecha" value="{{ fecha }}">
+    <button type="submit" class="btn-filtrar">Buscar</button>
+</form>
+
+
+<table class="tabla-reporte">
+    <thead>
+        <tr>
+            <th>ID Venta</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Forma de Pago</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if ventas %}
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.id_venta }}</td>
+                <td>{{ venta.fecha }}</td>
+                <td>{{ venta.nombre }} {{ venta.apellidos }}</td>
+                <td>{{ venta.forma_pago }}</td>
+                <td>S/ {{ "%.2f"|format(venta.total) }}</td>
+                <td>
+                    <a href="{{ url_for('gerente.detalle_venta', id_venta=venta.id_venta) }}" class="btn-detalle">
+                        🔍 Ver Detalle
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr><td colspan="5">No se encontraron ventas para esta fecha.</td></tr>
+        {% endif %}
+    </tbody>
+    <tfoot class="total-dia">
+    <tr>
+        <td colspan="4">Total del día:</td>
+        <td>S/ {{ "%.2f"|format(total_dia) }}</td>
+    </tr>
+</tfoot>
+
+
+</table>
+{% endblock %}

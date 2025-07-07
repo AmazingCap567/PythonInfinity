@@ -1,0 +1,66 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 20px;
+}
+
+.titulo {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.contenedor-busqueda {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#buscador {
+    width: 60%;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #dcdfe6;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+#buscador:focus {
+    border-color: #409eff;
+    outline: none;
+}
+
+.tabla-clientes {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tabla-clientes th,
+.tabla-clientes td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.tabla-clientes thead {
+    background-color: #3498db;
+    color: white;
+}
+
+.tabla-clientes tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.tabla-clientes tbody tr:hover {
+    background-color: #e0f7fa;
+}
+
+.tabla-clientes td {
+    color: #333;
+    font-size: 15px;
+}

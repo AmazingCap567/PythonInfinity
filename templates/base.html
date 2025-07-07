@@ -49,16 +49,6 @@
             display: block;
         }
 
-        .submenu {
-            position: relative;
-        }
-
-        .submenu .dropdown-content {
-            top: 0;
-            left: 100%;
-            margin-left: 1px;
-        }
-
         .disabled {
             color: gray;
             pointer-events: none;
@@ -67,46 +57,60 @@
         .main-content {
             padding: 30px 20px;
         }
+
+        .navbar a.activo {
+            background-color: #2f5b80;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .boton {
+            background-color: #1b3a57;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-right: 10px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .boton:hover {
+            background-color: #2f5b80;
+        }
     </style>
     {% block head %}{% endblock %}
 </head>
 <body>
     {% if session.get("usuario") %}
-<div class="navbar">
-<a>Inicio</a>
-    {% if session.get("cargo") == "Gerente" %}
-    <!-- Menú para GERENTE -->
-    <div class="dropdown">
-        <a href="#">Gestión</a>
-        <div class="dropdown-content">
-            <a href="{{ url_for('agregar_cliente') }}">Agregar nuevo Cliente</a>
-            <a href="#">Usuarios</a>
-            <a href="#">Proveedores</a>
-            <a href="#">Productos</a>
-            <a href="#">Reportes</a>
-        </div>
-    </div>
-    {% elif session.get("cargo") == "Vendedor" %}
-    <!-- Menú para VENDEDOR -->
-    <div class="dropdown">
-        <a href="#">Clientes</a>
-        <div class="dropdown-content">
-            <a href="#">Consultar Clientes</a>
-        </div>
-    </div>
+    <div class="navbar">
+        <a>Inicio</a>
 
-    <a href="{{ url_for('vendedor.ventas') }}">Venta</a>
-    <a href="{{ url_for('vendedor.historial_ventas') }}"class="boton">📊 Historial de Ventas</a>
+        {% if session.get("cargo") == "Gerente" %}
+            <a href="{{ url_for('gerente.clientes') }}" class="boton {% if request.endpoint == 'gerente.clientes' %}activo{% endif %}">Clientes</a>
+            <a href="{{ url_for('gerente.usuarios') }}" class="boton {% if request.endpoint == 'gerente.usuarios' %}activo{% endif %}">Usuarios</a>
+            <a href="{{ url_for('gerente.ver_productos') }}" class="boton {% if request.endpoint == 'gerente.ver_productos' %}activo{% endif %}">📦 Productos</a>
+
+            <div class="dropdown">
+                <a href="#" class="boton">📈 Reportes</a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('gerente.reporte_ventas_por_dia') }}">📅 Ventas por Día</a>
+                    <a href="{{ url_for('gerente.productos_mas_vendidos') }}">🛒 Productos Más Vendidos</a>
+                    <a href="{{ url_for('gerente.inventario_bajo') }}">📦 Inventario Bajo</a>
+                    <a href="{{ url_for('gerente.resumen_general') }}">📊 Resumen General</a>
+                </div>
+            </div>
+        {% elif session.get("cargo") == "Vendedor" %}
+            <a href="{{ url_for('vendedor.clientes') }}" class="boton {% if request.endpoint == 'vendedor.clientes' %}activo{% endif %}">👥 Ver Clientes</a>
+            <a href="{{ url_for('vendedor.ventas') }}" class="boton {% if request.endpoint == 'vendedor.ventas' %}activo{% endif %}">🛒 Venta</a>
+            <a href="{{ url_for('vendedor.historial_ventas') }}" class="boton {% if request.endpoint == 'vendedor.historial_ventas' %}activo{% endif %}">📊 Historial de Ventas</a>
+            <a href="{{ url_for('vendedor.consultar_stock') }}" class="boton {% if request.endpoint == 'vendedor.consultar_stock' %}activo{% endif %}">📦 Consultar Stock</a>
+        {% endif %}
+
+        <a href="{{ url_for('auth.logout') }}" class="boton">Cerrar sesión</a>
+        <span style="margin-left: 30px;">({{ session['usuario'] }} - {{ session['cargo'] }})</span>
+    </div>
     {% endif %}
-
-    <!-- Opción visible para ambos -->
-    <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
-
-    <!-- Info del usuario -->
-    <span style="margin-left: 30px;">({{ session['usuario'] }} - {{ session['cargo'] }})</span>
-</div>
-{% endif %}
-
 
     <div class="main-content">
         {% block content %}{% endblock %}

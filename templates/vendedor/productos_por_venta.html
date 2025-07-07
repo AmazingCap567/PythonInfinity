@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Productos de la Venta{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/productos_por_venta.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Productos de la Venta</h2>
+
+    {% if productos %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Color</th>
+                <th>Material</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.tipo or '-' }}</td>
+                <td>{{ producto.color or '-' }}</td>
+                <td>{{ producto.material or '-' }}</td>
+                <td>{{ producto.cantidad }}</td>
+                <td>S/ {{ "%.2f"|format(producto.precio_unitario) }}</td>
+                <td>S/ {{ "%.2f"|format(producto.subtotal) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center;">No hay productos registrados para esta venta.</p>
+    {% endif %}
+
+    <div style="text-align: center;">
+        <a href="{{ request.referrer or url_for('vendedor.historial_ventas') }}" class="boton-volver">← Volver</a>
+    </div>
+</div>
+{% endblock %}

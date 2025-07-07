@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Usuarios{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/usuarios.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Usuarios registrados</h2>
+
+    <!-- Botón para agregar nuevo usuario -->
+    <div class="boton-superior">
+        <a href="{{ url_for('gerente.agregar_usuario') }}" class="boton">➕ Nuevo Usuario</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>DNI</th>
+                <th>Cargo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr>
+                <td>{{ u[0] }}</td>
+                <td>{{ u[1] }}</td>
+                <td>{{ u[2] }}</td>
+                <td>{{ u[3] }}</td>
+                <td>
+                    <a href="{{ url_for('gerente.editar_usuario', id=u[0]) }}" class="boton">✏️ Editar</a>
+                    <a href="{{ url_for('gerente.eliminar_usuario_route', id=u[0]) }}" class="boton" onclick="return confirm('¿Eliminar usuario?')">🗑️ Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

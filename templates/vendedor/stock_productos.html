@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Consultar Stock{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stock_productos.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px; margin: auto; padding: 20px;">
+    <h2 style="text-align: center; margin-bottom: 20px;">Consultar Stock de Productos</h2>
+
+    <input type="text" id="buscador" placeholder="🔍 Buscar por nombre, tipo, color o material..."
+           style="width: 100%; padding: 10px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 20px;">
+
+    <table id="tabla-productos" style="width: 100%; border-collapse: collapse; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+        <thead style="background-color: #1b3a57; color: white;">
+            <tr>
+                <th style="padding: 12px;">Nombre</th>
+                <th>Tipo</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Color</th>
+                <th>Material</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in productos %}
+            <tr style="text-align: center;">
+                <td style="padding: 10px;">{{ p.nombre }}</td>
+                <td>{{ p.tipo or '-' }}</td>
+                <td>S/ {{ "%.2f"|format(p.precio) }}</td>
+                <td style="color: {% if p.stock <= 5 %}red{% else %}black{% endif %}; font-weight: bold;">
+                {{ p.stock }}
+                </td>
+
+                <td>{{ p.color or '-' }}</td>
+                <td>{{ p.material or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+// Búsqueda en tiempo real
+document.getElementById("buscador").addEventListener("input", function () {
+    let filtro = this.value.toLowerCase();
+    let filas = document.querySelectorAll("#tabla-productos tbody tr");
+
+    filas.forEach(fila => {
+        let textoFila = fila.innerText.toLowerCase();
+        fila.style.display = textoFila.includes(filtro) ? "" : "none";
+    });
+});
+</script>
+{% endblock %}
