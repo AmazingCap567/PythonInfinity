@@ -122,7 +122,7 @@ def agregar_producto_carrito():
 def registrar_venta():
     cliente = session.get("cliente_actual")
     carrito = session.get("carrito", [])
-    id_usuario = session.get("id_usuario")  # <-- OBTIENE el usuario logueado
+    id_usuario = session.get("id_usuario")  # Usuario logueado
 
     if not cliente or not carrito:
         flash("Debe ingresar un cliente y al menos un producto.", "warning")
@@ -134,7 +134,7 @@ def registrar_venta():
     conn = conectar_bd()
     cursor = conn.cursor()
 
-    # INSERT con id_usuario
+    # Insertar venta
     cursor.execute("""
         INSERT INTO ventas (id_cliente, fecha, forma_pago, total, id_usuario)
         VALUES (%s, NOW(), %s, %s, %s)
@@ -142,16 +142,36 @@ def registrar_venta():
         cliente["id_cliente"],
         forma_pago,
         total,
-        id_usuario  # <-- Agregado aquí
+        id_usuario
     ))
     id_venta = cursor.lastrowid
 
+    # Procesar cada producto en el carrito
     for item in carrito:
+        # Verificar stock
+        cursor.execute("SELECT stock FROM productos WHERE id_producto = %s", (item["id_producto"],))
+        stock_actual = cursor.fetchone()[0]
+
+        if item["cantidad"] > stock_actual:
+            flash(f"No hay suficiente stock para el producto {item['nombre']}. Stock disponible: {stock_actual}", "danger")
+            conn.close()
+            return redirect(url_for("vendedor.ventas"))
+
+        # Insertar detalle de venta
         cursor.execute("""
             INSERT INTO detalle_venta (id_venta, id_producto, cantidad, precio_unitario)
             VALUES (%s, %s, %s, %s)
         """, (
             id_venta, item["id_producto"], item["cantidad"], item["precio_unitario"]
+        ))
+
+        # Restar stock
+        cursor.execute("""
+            UPDATE productos
+            SET stock = stock - %s
+            WHERE id_producto = %s
+        """, (
+            item["cantidad"], item["id_producto"]
         ))
 
     conn.commit()
@@ -161,6 +181,7 @@ def registrar_venta():
     session.pop("carrito", None)
     flash("Venta registrada correctamente.", "success")
     return redirect(url_for("vendedor.ventas"))
+
 
 def limpiar_formulario():
     session.pop("cliente_actual", None)

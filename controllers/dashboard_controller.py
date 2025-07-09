@@ -32,18 +32,28 @@ def obtener_formas_pago_mas_usadas():
 def obtener_productos_mas_vendidos():
     conn = conectar_bd()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT p.nombre, SUM(dv.cantidad) AS cantidad_vendida
-        FROM detalle_venta dv
-        JOIN productos p ON dv.id_producto = p.id_producto
-        GROUP BY p.nombre
-        ORDER BY cantidad_vendida DESC
-        LIMIT 5
-    """)
-    resultados = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return resultados
+    try:
+        cursor.execute("""
+            SELECT
+                p.id_producto,
+                p.nombre,
+                p.tipo,
+                SUM(dv.cantidad) AS total_vendidos,
+                SUM(dv.precio_unitario * dv.cantidad) AS total_ingresos
+            FROM detalle_venta dv
+            JOIN productos p ON dv.id_producto = p.id_producto
+            GROUP BY p.id_producto, p.nombre, p.tipo
+            ORDER BY total_vendidos DESC
+        """)
+        resultados = cursor.fetchall()
+        return resultados
+    except Exception as e:
+        print("Error al obtener productos más vendidos:", e)
+        return []
+    finally:
+        cursor.close()
+        conn.close()
+
 
 def obtener_categorias_mas_vendidas():
     conn = conectar_bd()
